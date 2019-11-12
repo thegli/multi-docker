@@ -1,0 +1,22 @@
+sudo: required
+services:
+   - docker
+
+before_install:
+  - docker build -t thegli/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true thegli/react-test npm test
+
+after_success:
+  - docker build -t thegli/multi-client ./client
+  - docker build -t thegli/multi-nginx ./nginx
+  - docker build -t thegli/multi-server ./server
+  - docker build -t thegli/multi-worker ./worker
+  # log in to Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # take all four images and push them to Docker Hub
+  - docker push thegli/multi-client
+  - docker push thegli/multi-nginx
+  - docker push thegli/multi-server
+  - docker push thegli/multi-worker
