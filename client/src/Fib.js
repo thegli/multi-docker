@@ -65,7 +65,7 @@ class Fib extends Component {
       <div>
         <p>This is a test application used for learning Docker and Kubernetes.</p>
         <form onSubmit={this.handleSubmit}>
-          <label>Enter index (1-40): </label>
+          <label>Enter index (0-40): </label>
           <input
             maxLength="2"
             value={this.state.index}
