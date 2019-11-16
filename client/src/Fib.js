@@ -13,14 +13,20 @@ class Fib extends Component {
       this.fetchIndicies();
   }
 
-  async fetchValues() {
-    const values = await Axios.get('/api/values/current');
-    this.setState({ values: values.data });
-  }
-
   async fetchIndicies() {
     const seenIndicies = await Axios.get('/api/values/all');
-    this.setState({ seenIndicies: seenIndicies.data });
+    // cheap check to prevent storage of html response if api is not available
+    if (seenIndicies.hasOwnProperty('data') && seenIndicies.data[0] !== '<') {
+      this.setState({ seenIndicies: seenIndicies.data });
+    }
+  }
+
+  async fetchValues() {
+    const values = await Axios.get('/api/values/current');
+    // cheap check to prevent storage of html response if api is not available
+    if (values.hasOwnProperty('data') && values.data[0] !== '<') {
+      this.setState({ values: values.data });
+    }
   }
 
   handleSubmit = async (event) => {
@@ -32,7 +38,12 @@ class Fib extends Component {
   };
 
   renderSeenIndicies() {
-    return this.state.seenIndicies.map(({ number }) => number).join(', ');
+    // check if index history has values to render
+    if (this.state.seenIndicies.hasOwnProperty('data')) {
+      return this.state.seenIndicies.data.map(({ number }) => number).join(', ');
+    } else {
+      return (null);
+    }
   }
 
   renderValues() {
@@ -52,9 +63,11 @@ class Fib extends Component {
   render() {
     return (
       <div>
+        <p>This is a test application used for learning Docker and Kubernetes.</p>
         <form onSubmit={this.handleSubmit}>
-          <label>Enter index: </label>
+          <label>Enter index (1-40): </label>
           <input
+            maxLength="2"
             value={this.state.index}
             onChange={event => this.setState({ index: event.target.value })}
           /> 
