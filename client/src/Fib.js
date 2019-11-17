@@ -16,7 +16,7 @@ class Fib extends Component {
   async fetchIndicies() {
     const seenIndicies = await Axios.get('/api/values/all');
     // cheap check to prevent storage of html response if api is not available
-    if (seenIndicies.hasOwnProperty('data') && seenIndicies.data[0] !== '<') {
+    if (seenIndicies.hasOwnProperty('data')) {
       this.setState({ seenIndicies: seenIndicies.data });
     }
   }
@@ -39,10 +39,10 @@ class Fib extends Component {
 
   renderSeenIndicies() {
     // check if index history has values to render
-    if (this.state.seenIndicies.hasOwnProperty('data')) {
-      return this.state.seenIndicies.data.map(({ number }) => number).join(', ');
+    if (this.state.seenIndicies && this.state.seenIndicies.length) {
+      return this.state.seenIndicies.map(({ number }) => number).join(', ');
     } else {
-      return (null);
+      return ('No history available');
     }
   }
 
@@ -52,7 +52,7 @@ class Fib extends Component {
     for (let key in this.state.values) {
       entries.push(
         <div key={key}>
-          For index {key} the calculated number is {this.state.values[key]};
+          For index {key} the calculated number is {this.state.values[key]}
         </div>
       );
     }
